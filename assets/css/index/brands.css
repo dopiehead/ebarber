@@ -1,0 +1,76 @@
+
+/* Main container */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Brand section wrapper */
+.brands-section {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+}
+
+/* Left content area */
+.brands-content {
+    width: 50%;
+    padding: 60px 40px 60px 0;
+}
+
+.brands-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.brands-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #cccccc;
+    max-width: 400px;
+}
+
+/* Right grid area */
+.brands-grid {
+    width: 50%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    padding: 60px 0 60px 40px;
+}
+
+.brand-item {
+    background-color: #2a2a2a;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+    .brands-section {
+        flex-direction: column;
+    }
+    
+    .brands-content, .brands-grid {
+        width: 100%;
+    }
+    
+    .brands-content {
+        border-right: none;
+   
+        padding: 40px 0;
+    }
+    
+    .brands-grid {
+        padding: 40px 0;
+    }
+}

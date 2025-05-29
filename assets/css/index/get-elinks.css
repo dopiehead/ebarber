@@ -1,0 +1,153 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  
+}
+
+/* Food Delivery Section Styles */
+.food-section {
+    background-color: #eec752;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.location-bar {
+    background-color: white;
+    border-radius: 25px;
+    padding: 5px;
+    display: flex;
+    margin-bottom: 20px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.location-option {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.location-option.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.food-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.food-text {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.food-heading {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.food-categories {
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.food-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.food-button {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.location-button {
+    background-color: white;
+    color: black;
+    border: none;
+}
+
+.order-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.button-icon {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+}
+
+.food-image {
+    flex: 1;
+    text-align: right;
+    max-width: 350px;
+}
+
+.food-image img{
+  height:250px;
+}
+
+.food-plate {
+    width: 100%;
+    position: relative;
+}
+
+/* Drink Marketplace Section Styles */
+.drink-section {
+    background-color: #e6f2f7;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    min-height: 380px;
+}
+
+.drink-images {
+    flex: 1;
+    position: relative;
+    height: 250px;
+}
+
+
+.drink-images img{
+
+    height: 180px;
+}
+
+.drink-text {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.drink-heading {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    line-height: 1.1;
+    font-family: poppins;
+}
+
+.drink-description {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.5;
+    max-width: 300px;
+}

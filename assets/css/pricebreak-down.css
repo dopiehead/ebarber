@@ -1,0 +1,47 @@
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.dropdown-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+select {
+    background-color: #222;
+    color: white;
+    border: 1px solid #444;
+    padding: 8px 12px;
+    border-radius: 4px;
+    width: 170px;
+    margin-right: 10px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #aaa;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.pricing-table {
+    background-color: #222;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pricing-table th, .pricing-table td {
+    padding: 10px;
+    text-align: left;
+    color: #ffd700;
+    font-weight: normal;
+}

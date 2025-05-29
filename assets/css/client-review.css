@@ -1,0 +1,99 @@
+
+        
+        /* Header Section Styles */
+        .reviews-header {
+            text-align: center;
+            margin-top: 50px;
+            background-color: white;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #d4af37; /* Gold color */
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .main-title {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family:poppins !important;
+        }
+        
+        /* Testimonials Section Styles */
+        .testimonials-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            background-color: white;
+            padding: 20px;
+            margin: 0 auto;
+            color: #333;
+            scrollbar-width: none;
+            overflow-x: auto;
+        }
+        
+        .testimonial-item {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+        }
+
+        @media screen and (max-width:768px){
+            .testimonials-container {
+                flex-direction: column;
+
+                
+            }
+     
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .testimonial-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 20px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .client-name {
+            font-size: 14px;
+            color: #d4af37; /* Gold color */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        
+        /* Top border dots */
+        .top-dots {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            margin-bottom: 40px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 50%;
+        }

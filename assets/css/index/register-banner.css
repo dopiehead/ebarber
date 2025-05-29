@@ -1,0 +1,50 @@
+
+.service-container {
+    display: flex;
+    margin-bottom: 30px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 20px 40px;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+
+.service-info {
+    flex: 3;
+}
+
+.service-image {
+    flex: 1;
+    text-align: right;
+}
+
+.service-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.service-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.service-desc {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.register-btn {
+    background-color: #ffd700;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
