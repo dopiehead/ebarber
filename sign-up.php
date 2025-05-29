@@ -110,119 +110,123 @@ $page = isset($_GET['page']) && !empty($_GET['page']) ? $_GET['page'] : "";
         
     </div>
 
-    <!-- ===== JAVASCRIPT FOR SHOW/HIDE PASSWORD ===== -->
-    <script>
+<!-- ===== jQuery for Show/Hide Password, Form Validation and AJAX Submission ===== -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
     // Toggle password visibility
-    function togglePassword(fieldId) {
-        const passwordField = document.getElementById(fieldId);
-        const toggleButton = passwordField.nextElementSibling;
+    $('.toggle-password').on('click', function () {
+        const $passwordField = $(this).siblings('input');
+        const fieldType = $passwordField.attr('type');
 
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            toggleButton.textContent = 'Hide';
+        if (fieldType === 'password') {
+            $passwordField.attr('type', 'text');
+            $(this).text('Hide');
         } else {
-            passwordField.type = 'password';
-            toggleButton.textContent = 'Show';
+            $passwordField.attr('type', 'password');
+            $(this).text('Show');
         }
-    }
+    });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('#signupForm');
+    // User type selection
+    $('.btn-outline-secondary').on('click', function (e) {
+        e.preventDefault();
+        const userType = $(this).attr('id');
+        $('#user_type').val(userType);
 
-        // User type selection
-        document.querySelectorAll('.btn-outline-secondary').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const userType = this.id;
-                document.getElementById('user_type').value = userType;
+        $(this)
+            .addClass('btn-secondary text-white')
+            .siblings('.btn-outline-secondary')
+            .removeClass('btn-secondary text-white');
+    });
 
-                this.classList.add('btn-secondary', 'text-white');
-                this.parentElement.querySelectorAll('.btn-outline-secondary').forEach(sibling => {
-                    if (sibling !== this) sibling.classList.remove('btn-secondary', 'text-white');
-                });
-            });
-        });
+    // Form submission
+    $('#signupForm').on('submit', function (e) {
+        e.preventDefault();
 
-        // Form validation and AJAX submission
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+        const $form = $(this);
+        const fullName = $('#fullName');
+        const email = $('#email');
+        const phone = $('#phone');
+        const password = $('#password');
+        const confirmPassword = $('#confirmPassword');
 
-            const fullName = document.getElementById('fullName');
-            const email = document.getElementById('email');
-            const phone = document.getElementById('phone');
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirmPassword');
+        let isValid = true;
 
-            let isValid = true;
+        // Reset validation states
+        $('.form-group').removeClass('error success');
 
-            // Reset error/success states
-            document.querySelectorAll('.form-group').forEach(group => {
-                group.classList.remove('error', 'success');
-            });
+        // Full name validation
+        if ($.trim(fullName.val()).length < 2) {
+            fullName.closest('.form-group').addClass('error');
+            isValid = false;
+        } else {
+            fullName.closest('.form-group').addClass('success');
+        }
 
-            // Validation logic
-            if (fullName.value.trim().length < 2) {
-                fullName.closest('.form-group').classList.add('error');
-                isValid = false;
-            } else {
-                fullName.closest('.form-group').classList.add('success');
-            }
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.val())) {
+            email.closest('.form-group').addClass('error');
+            isValid = false;
+        } else {
+            email.closest('.form-group').addClass('success');
+        }
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.value)) {
-                email.closest('.form-group').classList.add('error');
-                isValid = false;
-            } else {
-                email.closest('.form-group').classList.add('success');
-            }
+        // Phone validation
+        const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
+        if (!phoneRegex.test(phone.val())) {
+            phone.closest('.form-group').addClass('error');
+            isValid = false;
+        } else {
+            phone.closest('.form-group').addClass('success');
+        }
 
-            const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
-            if (!phoneRegex.test(phone.value)) {
-                phone.closest('.form-group').classList.add('error');
-                isValid = false;
-            } else {
-                phone.closest('.form-group').classList.add('success');
-            }
+        // Password length
+        if (password.val().length < 8) {
+            password.closest('.form-group').addClass('error');
+            isValid = false;
+        } else {
+            password.closest('.form-group').addClass('success');
+        }
 
-            if (password.value.length < 8) {
-                password.closest('.form-group').classList.add('error');
-                isValid = false;
-            } else {
-                password.closest('.form-group').classList.add('success');
-            }
+        // Confirm password match
+        if (password.val() !== confirmPassword.val()) {
+            confirmPassword.closest('.form-group').addClass('error');
+            isValid = false;
+        } else {
+            confirmPassword.closest('.form-group').addClass('success');
+        }
 
-            if (password.value !== confirmPassword.value) {
-                confirmPassword.closest('.form-group').classList.add('error');
-                isValid = false;
-            } else {
-                confirmPassword.closest('.form-group').classList.add('success');
-            }
+        if (!isValid) return;
 
-            if (!isValid) return;
+        // Show spinner, disable button
+        $(".spinner-border").show();
+        $(".signup-note").addClass("d-none");
+        $(".btn-custom").prop("disabled", true);
 
-            // If valid, proceed with AJAX submission
-            document.querySelector(".spinner-border").style.display = 'inline-block';
-            document.querySelector('.signup-note')?.classList.add('d-none');
-            document.querySelector('.btn-custom').disabled = true;
+        const formData = new FormData(this);
 
-            const formData = new FormData(form);
-
-            fetch('engine/signup-process.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.querySelector(".spinner-border").style.display = 'none';
-                document.querySelector('.signup-note')?.classList.remove('d-none');
+        $.ajax({
+            url: 'engine/signup-process.php',
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function (data) {
+                $(".spinner-border").hide();
+                $(".signup-note").removeClass("d-none");
+                $(".btn-custom").prop("disabled", false);
 
                 if (data.status === "success") {
                     swal({
                         icon: "success",
-                        title: "Success!!",
+                        title: "Success!",
                         text: data.message
                     });
-                    form.reset();
+                    $form[0].reset();
+                    $('.form-group').removeClass('success error');
                 } else {
                     swal({
                         icon: "warning",
@@ -230,20 +234,21 @@ $page = isset($_GET['page']) && !empty($_GET['page']) ? $_GET['page'] : "";
                         text: data.message
                     });
                 }
-                document.querySelector('.btn-custom').disabled = false;
-            })
-            .catch(err => {
-                document.querySelector(".spinner-border").style.display = 'none';
+            },
+            error: function (xhr, status, error) {
+                $(".spinner-border").hide();
+                $(".signup-note").removeClass("d-none");
+                $(".btn-custom").prop("disabled", false);
+
                 swal({
                     icon: "error",
                     title: "Registration Failed",
-                    text: err.message || "Something went wrong"
+                    text: xhr.responseText || "Something went wrong"
                 });
-                document.querySelector('.btn-custom').disabled = false;
-                document.querySelector('.signup-note')?.classList.remove('d-none');
-            });
+            }
         });
     });
+});
 </script>
 
 
