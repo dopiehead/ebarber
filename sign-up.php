@@ -208,7 +208,7 @@ $(document).ready(function () {
         const formData = new FormData(this);
 
         $.ajax({
-            url: 'engine/signup-process.php',
+            url: 'engine/signup-process',
             method: 'POST',
             data: formData,
             contentType: false,

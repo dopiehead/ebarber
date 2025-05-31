@@ -1,3 +1,10 @@
+<?php 
+session_start();
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
+$user_name = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : "";
+$user_email = isset($_SESSION['user_email']) ? filter_var($_SESSION['user_email'], FILTER_SANITIZE_EMAIL) : "";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,15 +27,15 @@
                     <form id="conv">
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3" >
-                                <input type="email" name="email" id="email" class="form-control" placeholder="Enter a valid email address">
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Enter a valid email address" value="<?= htmlspecialchars($user_email) ?>">
                             </div>
                             <div class="col-12 col-md-6 mb-3">
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Enter your Name">
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Enter your Name"  value="<?= htmlspecialchars($user_name) ?>">
                             </div>
                         </div>
                         <div class="row">
                              <div class="col-12 col-md-6 mb-3">
-                                  <input type="text" name="subject" id="subject" class="form-control" placeholder="Enter your Name">
+                                  <input type="text" name="subject" id="subject" class="form-control" placeholder="Enter Subject">
                              </div>
                         </div>
 

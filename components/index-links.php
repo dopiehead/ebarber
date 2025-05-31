@@ -39,6 +39,3 @@
      <link rel="stylesheet" href="assets/css/index/brands.css">
      <link rel="stylesheet" href="assets/css/contact-us.css">
      <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-     <style>
-
-</style>

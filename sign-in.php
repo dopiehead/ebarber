@@ -9,6 +9,10 @@ $details = isset($_GET['details']) && !empty($_GET['details']) ? filter_var($_GE
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/registration/sign-in.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Barbershop Login</title>
 </head>
 <body>
@@ -20,33 +24,32 @@ $details = isset($_GET['details']) && !empty($_GET['details']) ? filter_var($_GE
   
         <!-- ===== LEFT SIDE - LOGIN FORM ===== -->
         <div class="login-section">
-            <form id="signinForm" class="login-form">                
-                <!-- ===== EMAIL/USERNAME FIELD ===== -->
-                <div class="form-group">
-                    <label for="email">Email or username</label>
-                    <input type="text" id="email" name="email" placeholder="Enter name" required>
-                </div>
+        <form id="signinForm" class="login-form" method="POST">
+    <!-- ===== EMAIL/USERNAME FIELD ===== -->
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter email" required>
+    </div>
 
-                <!-- ===== PASSWORD FIELD ===== -->
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="••••••••••" required>
-                </div>
+    <!-- ===== PASSWORD FIELD ===== -->
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••••" required>
+    </div>
+    <input type="hidden" name="url" id="url" value="<?= isset($details) ? htmlspecialchars($details) : '' ?>">
+    <!-- ===== LOGIN BUTTON ===== -->
+    <div class="form-group">
+        <button name="submit" type="submit" class="login-btn btn-custom">
+            <span class="spinner-border text-dark"></span> <span class="signin-note">Login</span>
+        </button>
+    </div>
 
-                <!-- ===== LOGIN BUTTON ===== -->
-                <div class="form-group">
-                    <button name="submit" type="submit" class="login-btn btn-custom"><span class="spinner-border text-dark"></span> <span class="signin-note">Login</span></button>
-                </div>
-
-                <!-- ===== SIGN UP LINK ===== -->
-                <div class="signup-link">
-                    Don't have an account? <a href="sign-up.php">Sign up</a>
-                </div>
-                
-            </form>
-            <div id="error-message">
-
-            </div>
+    <!-- ===== SIGN UP LINK ===== -->
+    <div class="signup-link">
+        Don't have an account? <a href="sign-up.php">Sign up</a>
+    </div>
+</form>
+<div id="error-message"></div>
         </div>
 
         <!-- ===== RIGHT SIDE - IMAGE SECTION ===== -->
@@ -60,57 +63,93 @@ $details = isset($_GET['details']) && !empty($_GET['details']) ? filter_var($_GE
         </div>
         
     </div>
-    <input type="hidden" name='url' id='url' value = "<?= htmlspecialchars($details) ?>">
-    <script>
-    $(document).ready(function() {
-        $(".spinner-border").hide();
-        
-        $("#signinForm").submit(function(event) {
-            event.preventDefault();
-            $(".spinner-border").show();
-            $(".signin-note").hide();
-            $('.btn-custom').prop('disabled', true);
-            
-            let email = $("#email").val();
-            let password = $("#password").val();
-            let url = $("#url").val().trim(); // Trim URL to ensure it's not empty
-            
-            $.ajax({
-                type: "POST",
-                url: "engine/login-process.php",
-                data: { email: email, password: password },
-                dataType: "json",
-                success: function(response) {
-                    $(".spinner-border").hide();
-                    $(".signin-note").show();
-                    $('.btn-custom').prop('disabled', false);
-                    
-                    if (response.status === "success") {
-                        if (url && url !== "") {
-                            window.location.href = url;
+<script>   
+   $(document).ready(function() {
+    $(".spinner-border").hide();
+
+    $("#signinForm").submit(function(event) {
+        event.preventDefault();
+
+        // Explicitly construct form data
+        let formData = {
+            email: $("#email").val().trim(),
+            password: $("#password").val().trim(),
+            url: $("#url").val().trim()
+        };
+
+        // Log data for debugging
+        console.log("Form Data Object:", formData);
+        console.log("Serialized Form Data:", $(this).serialize());
+
+        // Client-side validation
+        if (!formData.email || !formData.password) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please fill in all required fields.'
+            });
+            return;
+        }
+
+        $(".spinner-border").show();
+        $('.btn-custom').prop('disabled', true);
+
+        $.ajax({
+            type: "POST",
+            url: "engine/login-process",
+            data: formData, // Use the explicit object instead of serialize()
+            dataType: "json",
+            success: function(response) {
+                console.log("Server Response:", response);
+                $(".spinner-border").hide();
+                $('.btn-custom').prop('disabled', false);
+
+                if (response.status === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful',
+                        text: 'Redirecting...',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        if (formData.url && formData.url !== "") {
+                            window.location.href = formData.url;
                         } else {
                             switch (response.user_role) {
-                                case "Customer":
+                                case "customer":
                                     window.location.href = "dashboard/profile.php";
                                     break;
-                                case "Barber":
+                                case "barber":
                                     window.location.href = "dashboard/dashboard.php";
                                     break;
+                                default:
+                                    window.location.href = "dashboard/index.php";
                             }
                         }
-                    } else {
-                        $("#error-message").text(response.message);
-                    }
-                },
-                error: function() {
-                    $(".spinner-border").hide();
-                    $(".signin-note").show();
-                    $('.btn-custom').prop('disabled', false);
-                    $("#error-message").text("Something went wrong. Please try again.");
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: response.message
+                    });
                 }
-            });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error:", textStatus, errorThrown);
+                console.log("Response Text:", jqXHR.responseText);
+                $(".spinner-border").hide();
+                $('.btn-custom').prop('disabled', false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: `Request failed: ${textStatus}`
+                });
+            }
         });
     });
+});
 </script>
+
 </body>
 </html>

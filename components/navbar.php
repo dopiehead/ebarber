@@ -44,8 +44,11 @@
                     <li><a href="contact.php">Contact Us</a></li>
                 </ul> 
             </nav>
-
-            <a href="products.php" class="book-btn">BOOK APPOINTMENT</a>
+             <?php if(isset($_SESSION['user_id'])): ?>
+                <a href="products.php" class="book-btn">BOOK APPOINTMENT</a>
+              <?php else: ?>
+                <a href="dashboard/dashboard.php" class="book-btn">BOOK APPOINTMENT</a>
+              <?php endif ?>
         </header>
         
         <div class="main-content">

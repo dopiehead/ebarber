@@ -34,6 +34,7 @@ if ($get_notifications->bind_param("i", $_SESSION['user_id'])) {
 <?php include("components/sidebar.php"); ?>
 
 <div class="main-content p-3">
+    
     <?php include("components/overview.php"); ?>
 
     <?php if ($result->num_rows > 0): ?>
@@ -68,7 +69,6 @@ if ($get_notifications->bind_param("i", $_SESSION['user_id'])) {
         </div>
     <?php endif; ?>
 </div>
-
 <!-- JavaScript Dependencies -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

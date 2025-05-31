@@ -12,7 +12,7 @@ body {
     background-color: #0000008a;
     color: #fff;
     overflow-x: hidden;
-    /* background-image: url('../../assets/images/background/barber.jpg'); */
+    background-image: url('../../assets/images/background/barber.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

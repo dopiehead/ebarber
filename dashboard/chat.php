@@ -2,13 +2,13 @@
 include("checkSession.php");
 require ('../engine/config.php');
 // Set sender details if session is active
-if (isset($_SESSION['id'])) {
-    $sender = "niyialabi10@gmail.com";
-    $senderName = "Neeyo";
+if (isset($_SESSION['user_id'])) {
+    $sender = $_SESSION['user_email'];
+    $senderName =  $_SESSION['user_name'];
 } else {
     // If session check is required, uncomment this block:
-    // echo "<script>location.href='../sign-in.php'</script>";
-    // exit();
+    echo "<script>location.href='../sign-in.php'</script>";
+    exit();
 }
 
 // Get user_name from URL and sanitize

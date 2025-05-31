@@ -1,6 +1,6 @@
 <?php include("checkSession.php");
 require_once '../engine/config.php'; // Ensure this sets $conn
-$you = 'ngnimitech@gmail.com'; // Example static value – replace with your dynamic user
+$you = $_SESSION['user_email']; // Example static value – replace with your dynamic user
 $limit = 2;
 $page_number = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
 $offset = ($page_number - 1) * $limit;

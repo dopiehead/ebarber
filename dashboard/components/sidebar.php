@@ -7,11 +7,15 @@
                 <i class="fas fa-home"></i>
             </a>
         </div>
+
+        <?php if($_SESSION['user_role']=='barber'): ?>
         <div class="sidebar-item active">
             <a class="text-decoration-none" href="dashboard.php" title="Dashboard">
                 <i class="fas fa-tachometer-alt"></i>
             </a>
         </div>
+        <?php endif ?>
+
         <div class="sidebar-item">
             <a class="text-decoration-none" href="profile.php" title="Profile">
                 <i class="fas fa-user-alt"></i>

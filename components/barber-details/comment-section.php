@@ -10,11 +10,11 @@
         <?php if(isset($_SESSION['user_id'])): ?>
         <div class="comment-input-section">
          
-            <form id="commentForm">             
+            <form style="width:100%;" id="commentForm" class="w-100">             
                 <input type="hidden" name="sender_name" value="<?= htmlspecialchars($_SESSION['user_name']) ?>">
                 <input type="hidden" name="sender_email" value="<?= htmlspecialchars($_SESSION['user_email']) ?>">
                 <input type="hidden" name="barber_id" value="<?= htmlspecialchars($id) ?>">           
-               <textarea name="comment" class="comment-input" placeholder="Write something about this Barber"></textarea>
+               <textarea name="comment" class="comment-input w-75" placeholder="Write something about this Barber"></textarea>
                <button name="submit" class="send-btn">Send</button>
             </form>
 

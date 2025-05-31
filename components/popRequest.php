@@ -12,13 +12,13 @@
         </div>
 
         <!-- Personal Phone Section -->
-        <div class="form-field">
+        <div class="form-field w-100">
             <label class="form-label">Personal Phone no</label>
             <input type="tel" class="form-input" value="<?= htmlspecialchars($_SESSION['user_phone']) ?>" readonly>
         </div>
 
         <!-- Number of People Section -->
-        <div class="form-field">
+        <div class="form-field w-100">
             <label class="form-label">How many people are barbing</label>
             <select class="form-select">
                 <option value="2">2</option>
@@ -30,13 +30,12 @@
         </div>
 
         <!-- Style Selection Section -->
-        <div class="form-field">
-            <label class="form-label">Choose style</label>
+        <div class="form-field w-100">
+            <label class="form-label">Choose Gender</label>
             <select class="form-select">
                 <option value="">Choose from the dropdown</option>
-                <option value="afro">Afro style</option>
-                <option value="modern">Modern style</option>
-                <option value="classic">Classic style</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
             </select>
         </div>
 
@@ -69,8 +68,19 @@
                     <input type="radio" id="skin" name="style6" class="option-radio">
                     <label for="skin" class="option-label">Skin</label>
                 </div>
+                <div class="option-item">
+                    <input type="radio" id="skin" name="others" class="option-radio other-option">
+                    <label for="skin" class="option-label">Others</label>
+                </div>
             </div>
+
+        <div class=" other-container d-none">
+             <input type="text" name="other_input" class="w-100 mb-1 px-2 border-1 border-white bg-dark py-1 text-white" placeholder="Other styles">
+             
         </div>
+
+        </div>
+
 
         <!-- Service Type Buttons Section -->
         <div class="service-type-section">
@@ -84,19 +94,24 @@
         <div class="location-date-section">
             <div class="form-field">
                 <label class="form-label">Location</label>
-                <select class="form-select">
-                    <option value="ikeja">Ikeja Alausa</option>
-                    <option value="victoria">Victoria Island</option>
-                    <option value="lekki">Lekki</option>
+                <select class="form-select text-capitalize">
+                <?php
+                // ini_set('display_errors', 1);
+                // ini_set('display_startup_errors', 1);
+                // error_reporting(E_ALL);
+                require("engine/connection.php");            
+                $stmt = $con->prepare("SELECT DISTINCT state FROM states_in_nigeria ORDER BY state ASC");
+                $stmt->execute();
+                $result = $stmt->get_result();
+                    while ($loc = $result->fetch_assoc()) {    ?>
+                            <option value="<?= htmlspecialchars($loc['state']) ?>"><?= htmlspecialchars($loc['state']) ?></option>
+                   <?php }    ?>
                 </select>
             </div>
             <div class="form-field">
                 <label class="form-label">Date</label>
-                <select class="form-select">
-                    <option value="12-03-2023">12-03-2023</option>
-                    <option value="13-03-2023">13-03-2023</option>
-                    <option value="14-03-2023">14-03-2023</option>
-                </select>
+                <input type="date" class="form-select form-control py-2">
+                   
             </div>
         </div>
 
@@ -124,9 +139,23 @@
 
         <!-- Action Buttons Section -->
         <div class="action-buttons">
-            <button class="btn btn-accept">Accept</button>
-            <button class="btn btn-reject">Reject</button>
+            <button class="btn btn-reject">Clear</button>
+            <button class="btn btn-accept">Send request</button>
         </div>
     </div>
+
+    <script>
+    $(document).on("click",".other-option",function(e){
+        $(".other-container").toggleClass("d-none");
+    });
+
+    $(document).on("click",".service-btn",function(e){
+        e.preventDefault();
+        $(".service-btn").removeClass("active");
+        $(this).addClass("active");
+
+    });
+</script>
+
 </body>
 </html>

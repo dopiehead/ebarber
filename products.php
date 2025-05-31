@@ -183,13 +183,13 @@ $(document).ready(function () {
                         <div class="card">
                             <div class="purple-highlight"></div>
                             <div class="card-image">
-                                <a href="barber-details.php?id=${barber.id}">
+                                <a href="barber-details?id=${barber.id}">
                                     <img src="${barber.user_image}" alt="${barber.user_name}">
                                 </a>
                             </div>
                             <div class="card-details">
                                 <div class="card-info"><span class="name">Name:</span> 
-                                    <a href="barber-details.php?id=${barber.id}" class="text-white">${barber.user_name}</a>
+                                    <a href="barber-details?id=${barber.id}" class="text-white">${barber.user_name}</a>
                                 </div>
                                 <div class="card-info"><span class="name">Age:</span> ${barber.age}</div>
                                 <div class="card-info"><span class="name">Gender:</span> ${barber.user_gender}</div>
