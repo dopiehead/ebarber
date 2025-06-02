@@ -40,8 +40,7 @@
             
             <button class="explore-button">EXPLORE NOW</button>
         </div>
-        
-       
+             
   <div class="stats-section">
     <div class="stat-item">
       <svg class="stat-icon" viewBox="0 0 24 24">

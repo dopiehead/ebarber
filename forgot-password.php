@@ -23,7 +23,7 @@
         </a>
      </div>
         
-        <!-- ===== LEFT SIDE - LOGIN FORM ===== -->
+        <!-- ===== LEFT SIDE -  FORM ===== -->
         <div class="login-section">
             <form class="login-form">
                 

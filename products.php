@@ -14,7 +14,7 @@
 
 <!-- Booking Form Container -->
 <div class="booking-form px-5 mt-4">
-    <form method="POST" action="">
+
         <!-- Row 1: Search, People, Style -->
         <div class="form-row  flex-md-row flex-column">
             <!-- Search Input -->
@@ -89,7 +89,7 @@
         <div class="form-row">
             <button type="submit" class="search-button">Search</button>
         </div>
-    </form>
+ 
 </div>
 
 <!-- Price & Filter Section -->
@@ -124,8 +124,8 @@
         <!-- Gender Filter -->
         <div class="more-filter mt-4">
             <div class="more-filter-title text-success">More Filter</div>
-            <div class="filter-row"><span>Male</span><span>10</span></div>
-            <div class="filter-row"><span>Female</span><span>10</span></div>
+            <div class="filter-row"><span name="user_preference[]" id="male">Male</span><span>10</span></div>
+            <div class="filter-row"><span name="user_preference[]" id="female">Female</span><span>10</span></div>
         </div>
 
     <label class="more-filter-title text-success">Sort By</label>
@@ -148,12 +148,11 @@
 
     <!-- Main Content Area -->
     <div class="content" data-aos="fade-up">
+         <div style="display: none;" class="text-warning fs-3"><span class="spinner-border text-warning"></span></div>
         <div id="product-content"></div>
     </div>
   
 </div>
-
-<div id="pagination" class="text-center mt-3"></div>
 
 
 <br><br>
@@ -162,114 +161,124 @@
 
 <!-- Product Load Script -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-$(document).ready(function () {
-    function loadBarbers(filters = {}) {
-        $.ajax({
-            url: 'engine/get-products.php', // Replace with your PHP file path
-            type: 'POST',
-            data: filters,
-            dataType: 'json',
-            beforeSend: function () {
-                $('#product-content').html('<p>Loading...</p>');
-            },
-            success: function (response) {
-                let html = `<div class='card-grid'>`;
-                if (response.barbers.length > 0) {
-                    $.each(response.barbers, function (i, barber) {
-                        html += `
-                       
-                        <div class="card">
-                            <div class="purple-highlight"></div>
-                            <div class="card-image">
-                                <a href="barber-details?id=${barber.id}">
-                                    <img src="${barber.user_image}" alt="${barber.user_name}">
-                                </a>
-                            </div>
-                            <div class="card-details">
-                                <div class="card-info"><span class="name">Name:</span> 
-                                    <a href="barber-details?id=${barber.id}" class="text-white">${barber.user_name}</a>
-                                </div>
-                                <div class="card-info"><span class="name">Age:</span> ${barber.age}</div>
-                                <div class="card-info"><span class="name">Gender:</span> ${barber.user_gender}</div>
-                                <div class="card-info"><span class="name">Location:</span> ${barber.user_location}</div>
-                                <div class="distance">34km away from pickup</div>
-                            </div>
-                            <div class="card-stats">
-                                <div class="stat"><span>${barber.user_likes} Likes</span></div>
-                                <div class="share-button"><span>${barber.user_shares} Shares</span></div>
-                            </div>
-                        </div>`;
-                    });
-                } else {
-                    html = '<p>No barbers found.</p>';
-                }
+$(document).ready(function() {
+   $("#product-content").load("engine/get-products");
 
-                $('#product-content').html(html);
-                renderPagination(response.page, response.totalPages);
+    // Search input
+    $('#q').on('keyup', function(e) {
+        const x = $('#q').val();
+        e.preventDefault();
+        fetchData(x);
+    });
+
+    // Filter: barber_style
+    $('#barber_style').on('change', function(e) {
+        const x = $('#q').val();
+        const barber_style = $('#barber_style').val();
+        e.preventDefault();
+        fetchData(x,barber_style);
+    });
+
+    // Filter: location
+    $('#locationFilter').on('change', function(e) {
+        e.preventDefault();
+        const x = $('#q').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();
+        fetchData(x, barber_style, locationFilter);
+    });
+
+    // Filter: user_preference (on click)
+    $('#user_preference').on('click', function(e) {
+        e.preventDefault();
+        const x = $('#q').val();
+        const user_preference = $('#user_preference').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();       
+        fetchData(x, barber_style, locationFilter, user_preference);
+    });
+
+    // Price range filters
+    $('#price_from').on('keyup', function(e) {
+        e.preventDefault();
+        const user_preference = $('#user_preference').val();
+        const x = $('#q').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();   
+        const price_from = $('#price_from').val();     
+        fetchData(x, barber_style, locationFilter, user_preference, price_from);
+    });
+
+    $('#price_to').on('keyup', function(e) {
+        e.preventDefault();
+        const user_preference = $('#user_preference').val();
+        const x = $('#q').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();   
+        const price_from = $('#price_from').val(); 
+        const price_to = $('#price_to').val(); 
+        fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to);
+    });
+
+    // Order by filter
+    $('#orderBy').on('change', function(e) {
+        e.preventDefault();
+        const user_preference = $('#user_preference').val();
+        const x = $('#q').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();   
+        const price_from = $('#price_from').val(); 
+        const price_to = $('#price_to').val(); 
+        const orderBy = $('#orderBy').val(); 
+        fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to, orderBy);
+    });
+
+    // Pagination
+    $(document).on("click", ".btn-pagination", function(e) {
+        e.preventDefault();
+        const x = $('#q').val();
+        const page = $(this).attr("id");
+        const user_preference = $('#user_preference').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();   
+        const price_from = $('#price_from').val(); 
+        const price_to = $('#price_to').val(); 
+        const orderBy = $('#orderBy').val(); 
+        fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to, orderBy, page);
+    });
+
+    // Main AJAX function
+    function fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to, orderBy, page) {
+        $(".spinner-border").show();
+
+        $.ajax({
+            url: "engine/get-products",
+            type: "POST",
+            data: {
+                q: x,
+                barber_style: barber_style,
+                locationFilter: locationFilter,
+                user_preference: user_preference,
+                price_from: price_from,
+                price_to: price_to,
+                orderBy: orderBy,
+                page: page
             },
-            error: function () {
-                $('#product-content').html('<p>Error loading data.</p>');
+            success: function(data) {
+                $(".spinner-border").hide();
+                $("#product-content").html(data).show();
+            },
+            error: function(xhr, status, error) {
+                $(".spinner-border").hide();
+                console.error("AJAX Error:", status, error);
+                $("#product-content").html("<div class='alert alert-danger w-100'>An error occurred while loading the data. Please try again later.</div>");
             }
         });
     }
 
-    function renderPagination(current, total) {
-        let paginationHTML = '';
-        let radius = 2;
-
-        if (current > 1) {
-            paginationHTML += `<a  class="page-link" data-page="${current - 1}">&lt;</a>`;
-        }
-
-        for (let i = 1; i <= total; i++) {
-            if (i === current) {
-                paginationHTML += `<a  class="page-link active" data-page="${i}">${i}</a>`;
-            } else if (i <= radius || i > total - radius || (i >= current - radius && i <= current + radius)) {
-                paginationHTML += `<a  class="page-link" data-page="${i}">${i}</a>`;
-            } else if (i === current - radius || i === current + radius) {
-                paginationHTML += `<span>...</span>`;
-            }
-        }
-
-        if (current < total) {
-            paginationHTML += `<a  class="page-link" data-page="${current + 1}">&gt;</a>`;
-        }
-
-        $('#pagination').html(paginationHTML);
-    }
-
-    // Initial load
-    loadBarbers();
-
-    // Pagination click
-    $(document).on('click', '.page-link', function (e) {
-        e.preventDefault();
-        const page = $(this).data('page');
-        const filters = getFilters();
-        filters.page = page;
-        loadBarbers(filters);
-    });
-
-    // Search/filter form handler
-    $('#filterForm').on('submit', function (e) {
-        e.preventDefault();
-        const filters = getFilters();
-        loadBarbers(filters);
-    });
-
-    function getFilters() {
-        return {
-            q: $('#q').val(),
-            locationFilter: $('#locationFilter').val(),
-            user_preference: $('#preferenceFilter').val(),
-            price_from: $('#priceFrom').val(),
-            price_to: $('#priceTo').val(),
-            orderBy: $('#orderBy').val()
-        };
-    }
 });
 </script>
+
 </body>
 </html>
