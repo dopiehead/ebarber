@@ -240,4 +240,8 @@
             width: 1px;
             margin-right: 10px;
         }
+
+        .active{
+            color:yellow;
+        }
     

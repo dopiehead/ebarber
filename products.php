@@ -23,16 +23,6 @@
                 <input type="search" name="q" id="q" class="w-100 border-secondary">
             </div>
 
-            <!-- People Count -->
-            <div class="form-field">
-                <label class="form-label">How many people are barbing</label>
-                <select class="dropdown" name="people_count">
-                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <option value="<?= $i ?>"><?= $i ?></option>
-                    <?php endfor; ?>
-                </select>
-            </div>
-
             <!-- Style Dropdown -->
             <div class="form-field">
                 <label class="form-label">Add style</label>
@@ -124,8 +114,22 @@
         <!-- Gender Filter -->
         <div class="more-filter mt-4">
             <div class="more-filter-title text-success">More Filter</div>
-            <div class="filter-row"><span name="user_preference[]" id="male">Male</span><span>10</span></div>
-            <div class="filter-row"><span name="user_preference[]" id="female">Female</span><span>10</span></div>
+            <?php 
+// Use conditional COUNT for accurate gender breakdown
+$getgender = $conn->prepare("
+    SELECT 
+        COUNT(CASE WHEN user_gender = 'male' THEN 1 END) AS numMale, 
+        COUNT(CASE WHEN user_gender = 'female' THEN 1 END) AS numFemale 
+    FROM user_profile 
+    WHERE verified = 1 AND user_type = 'barber'
+");
+$getgender->execute();
+$getgender->bind_result($numMale, $numFemale);
+$getgender->fetch();
+$getgender->close();
+?>
+            <div class="filter-row"><span style="cursor:pointer;" name="gender[]" class='gender' id="male">Male</span><span><?= htmlspecialchars($numMale ?? 0) ?></span></div>
+            <div class="filter-row"><span style="cursor:pointer;" name="gender[]" class='gender' id="female">Female</span><span><?= htmlspecialchars($numFemale ?? 0) ?></span></div>
         </div>
 
     <label class="more-filter-title text-success">Sort By</label>
@@ -176,6 +180,7 @@ $(document).ready(function() {
     $('#barber_style').on('change', function(e) {
         const x = $('#q').val();
         const barber_style = $('#barber_style').val();
+        alert(barber_style);
         e.preventDefault();
         fetchData(x,barber_style);
     });
@@ -190,7 +195,7 @@ $(document).ready(function() {
     });
 
     // Filter: user_preference (on click)
-    $('#user_preference').on('click', function(e) {
+    $('#user_preference').on('change', function(e) {
         e.preventDefault();
         const x = $('#q').val();
         const user_preference = $('#user_preference').val();
@@ -199,6 +204,21 @@ $(document).ready(function() {
         fetchData(x, barber_style, locationFilter, user_preference);
     });
 
+
+    $('.gender').on('click', function(e) {
+         $(".gender").removeClass("active");
+         $(this).addClass("active");
+        e.preventDefault();
+        const x = $('#q').val();
+        const user_preference = $('#user_preference').val();
+        const barber_style = $('#barber_style').val();
+        const locationFilter = $('#locationFilter').val();  
+        const gender = $(this).attr("id");     
+        fetchData(x, barber_style, locationFilter, user_preference, gender);
+    });
+
+
+
     // Price range filters
     $('#price_from').on('keyup', function(e) {
         e.preventDefault();
@@ -206,8 +226,9 @@ $(document).ready(function() {
         const x = $('#q').val();
         const barber_style = $('#barber_style').val();
         const locationFilter = $('#locationFilter').val();   
-        const price_from = $('#price_from').val();     
-        fetchData(x, barber_style, locationFilter, user_preference, price_from);
+        const price_from = $('#price_from').val();    
+        const gender = $('.gender').attr("id");  
+        fetchData(x, barber_style, locationFilter, user_preference, gender, price_from);
     });
 
     $('#price_to').on('keyup', function(e) {
@@ -218,7 +239,8 @@ $(document).ready(function() {
         const locationFilter = $('#locationFilter').val();   
         const price_from = $('#price_from').val(); 
         const price_to = $('#price_to').val(); 
-        fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to);
+        const gender = $('.gender').attr("id");  
+        fetchData(x, barber_style, locationFilter, user_preference, gender, price_from, price_to);
     });
 
     // Order by filter
@@ -231,7 +253,8 @@ $(document).ready(function() {
         const price_from = $('#price_from').val(); 
         const price_to = $('#price_to').val(); 
         const orderBy = $('#orderBy').val(); 
-        fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to, orderBy);
+        const gender = $('.gender').attr("id");  
+        fetchData(x, barber_style, locationFilter, user_preference, gender,price_from, price_to, orderBy);
     });
 
     // Pagination
@@ -245,11 +268,12 @@ $(document).ready(function() {
         const price_from = $('#price_from').val(); 
         const price_to = $('#price_to').val(); 
         const orderBy = $('#orderBy').val(); 
-        fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to, orderBy, page);
+        const gender = $('.gender').attr("id"); 
+        fetchData(x, barber_style, locationFilter, user_preference, gender, price_from, price_to, orderBy, page);
     });
 
     // Main AJAX function
-    function fetchData(x, barber_style, locationFilter, user_preference, price_from, price_to, orderBy, page) {
+    function fetchData(x, barber_style, locationFilter, user_preference, gender, price_from, price_to, orderBy, page) {
         $(".spinner-border").show();
 
         $.ajax({
@@ -260,6 +284,7 @@ $(document).ready(function() {
                 barber_style: barber_style,
                 locationFilter: locationFilter,
                 user_preference: user_preference,
+                gender: gender,
                 price_from: price_from,
                 price_to: price_to,
                 orderBy: orderBy,

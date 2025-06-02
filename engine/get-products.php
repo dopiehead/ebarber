@@ -52,6 +52,13 @@ if (isset($_POST['q']) && !empty($_POST['q'])) {
     }
 }
 
+
+$barber_style = isset($_POST['barber_style']) && !empty($_POST['barber_style ']) ? $conn->real_escape_string($_POST['barber_style']) : "";
+if ($barber_style) {
+     $baseQuery .= " AND user_services LIKE '%".$barber_style."%'";
+}
+
+
 // Location filter
 $locationFilter = isset($_POST['locationFilter']) && !empty($_POST['locationFilter']) ? $conn->real_escape_string($_POST['locationFilter']) : "";
 if ($locationFilter) {
@@ -102,7 +109,9 @@ switch ($orderBy) {
 }
 
 // Pagination
+print_r($baseQuery);
 $finalQuery = $baseQuery . " LIMIT $initial_page, $num_per_page";
+
 $counter = $initial_page + 1;
 
 // Execute query

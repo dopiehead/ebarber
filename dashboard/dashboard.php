@@ -1,4 +1,8 @@
-<?php include("checkSession.php")  ?>
+<?php include("checkSession.php");
+$user_id = $_SESSION['user_id'];
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : " ";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,11 +18,13 @@
 </head>
 <body>
     <!-- Sidebar -->
-   <?php include ("components/sidebar.php"); ?>
+    <?php include ("components/sidebar.php"); ?>
+
     <!-- Main Content -->
     <div class="main-content bg-secondary">
+
         <!-- Header -->
-       <?php include("components/overview.php"); ?>
+        <?php include("components/overview.php"); ?>
 
         <!-- Navigation Tabs -->
         <div class="tabs-nav">
@@ -26,12 +32,12 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#overview">Overview</a>
                 </li>
-
             </ul>
         </div>
 
         <!-- Dashboard Content -->
         <div class="dashboard-content">
+
             <!-- Stats Cards -->
             <div class="stats-cards">
                 <div class="stat-card">
@@ -43,7 +49,15 @@
                             <i class="fas fa-ellipsis-v"></i>
                         </div>
                     </div>
-                    <div class="stat-value">0</div>
+                    <?php
+                    $getCustomer = $conn->prepare("SELECT * FROM barber_request WHERE barber_id = ? AND pending = 1 ");
+                    $getCustomer->bind_param("i",$user_id);
+                    if($getCustomer->execute()):
+                        $customerResult = $getCustomer->get_result();
+                        $numCustomer = $customerResult->num_rows;
+                    endif;
+                    ?>
+                    <div class="stat-value"><?= htmlspecialchars($numCustomer) ?></div>
                     <div class="stat-label">Total Customers</div>
                     <div class="stat-change positive">
                         <i class="fas fa-arrow-up"></i>
@@ -77,7 +91,15 @@
                             <i class="fas fa-ellipsis-v"></i>
                         </div>
                     </div>
-                    <div class="stat-value">0</div>
+                    <?php
+                    $getPendingrequest = $conn->prepare("SELECT * FROM barber_request WHERE barber_id = ? AND pending = 0 ");
+                    $getPendingrequest->bind_param("i",$user_id);
+                    if($getPendingrequest->execute()):
+                        $requestPendingresult = $getPendingrequest->get_result();
+                        $numRequest = $requestPendingresult->num_rows;
+                    endif;
+                    ?>
+                    <div class="stat-value"><?= htmlspecialchars($numRequest) ?></div>
                     <div class="stat-label">Requests</div>
                     <div class="user-avatars">
                         <div class="user-avatar" style="background: linear-gradient(45deg, #ff6b6b, #ee5a6f);"></div>
@@ -94,7 +116,7 @@
                 <div class="activity-header">
                     <div>
                         <h3 class="activity-title">
-                            Vendor Activity History
+                            Barber Activity History
                             <span class="activity-total">116 Total</span>
                         </h3>
                         <p class="activity-subtitle">Here you can track your vendor's performance everyday</p>
@@ -121,151 +143,148 @@
                         <button class="clear-filter" onclick="clearFilters()">
                             Clear All <i class="fas fa-times"></i>
                         </button>
-              
                         <button class="add-customer-btn" onclick="addCustomer()">
-                            <i class="fas fa-plus"></i> Search for Customer
+                             Search for Customer
                         </button>
                     </div>
                 </div>
 
+                <!-- Table -->
                 <div class="table-container">
                     <table class="activity-table">
                         <thead>
                             <tr>
-                                <th>Company Name</th>
-                                <th>Performance</th>
-                                <th>Description</th>
-                                <th>Last Checked</th>
+                                <th>Customer Image</th>
+                                <th>Customer Name</th>
+                                <th>Number of people barbing</th>
+                                <th>Customer preference</th>
+                                <th>Customer style</th>
+                                <th>Customer location</th>
+                                <th>Date</th>
                                 <th>Status</th>
-                                <th></th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr onclick="selectRow(this)">
+                        <?php 
+                        
+                        require("../engine/config.php");
+                        $getrequest = $conn->prepare("SELECT * FROM barber_request WHERE barber_id = ? ORDER BY pending DESC");
+                        $getrequest->bind_param("i",$user_id);
+                        if($getrequest->execute()):
+                            $requestResult = $getrequest->get_result();
+                            while($request = $requestResult->fetch_assoc()):
+                                include("../contents/request-content.php");
+                                $getcustomerDetails = $conn->prepare("SELECT id,user_name,user_image FROM user_profile WHERE id = ?");
+                                $getcustomerDetails->bind_param("i",$request_customer_id);
+                                if($getcustomerDetails->execute()){
+                                    $resultCustomerdetails = $getcustomerDetails->get_result();
+                                    while ($user = $resultCustomerdetails->fetch_assoc()) {
+                                      include("../contents/profile-content.php");
+                                    }
+                                }
+                                ?>
+                            <tr>
+                                <td><div style='height:60px;width:60px;border-radius:50%;'><img class='w-100' src="<?= htmlspecialchars($user_image) ?>" alt=""></div></td>
+                                <td><div><?= htmlspecialchars($user_name) ?></div></td>
+                                <td><div class='text-capitalize'><?= htmlspecialchars($request_number_of_people_barber) ?><div></td>
+                                <td><div class='text-capitalize'><?= htmlspecialchars(preg_replace("/_/"," ",$request_user_preference)) ?></div></td>
+                                <td><div class='text-capitalize'><?= htmlspecialchars($request_barber_style) ?></div></td>
+                                <td><div class='text-capitalize'><?= htmlspecialchars($request_location) ?></div></td>
+                                <td><div class="date"><?=htmlspecialchars($request_date) ?></div></td>
                                 <td>
-                                    <div class="company-info">
-                                        <div class="company-logo" style="background: #00b894;">
-                                            <i class="fas fa-cube"></i>
-                                        </div>
-                                        <div class="company-details">
-                                            <h6>Blox</h6>
-                                            <p>getblox.com</p>
-                                        </div>
+                                    <div>
+                                        <?php if($request_status == 0): ?>
+                                            <a id="<?= htmlspecialchars($request_id) ?>" class="status-badge paid btn-accept text-decoration-none">Accept</a>
+                                        <?php else : ?>
+                                            <a id="<?= htmlspecialchars($request_id) ?>" class="status-badge failed btn-reject text-decoration-none">Reject</a>
+                                        <?php endif ?>
                                     </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill purple" style="width: 28%;"></div>
-                                    </div>
-                                    <div class="progress-percentage">28%</div>
-                                </td>
-                                <td>
-                                    <div class="description">
-                                        <h6>AI Content Creation App</h6>
-                                        <p>Makes magic with the power of AI/ML</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date">July 15, 2026</div>
-                                </td>
-                                <td>
-                                    <span class="status-badge paid">Paid</span>
                                 </td>
                                 <td>
                                     <div class="row-menu">
-                                        <i class="fas fa-ellipsis-v"></i>
+                                       
+                                        <div class='delete-container w-100'>
+                                            <a class="text-danger btn border-danger rounded status-badge btn-delete" id="<?= htmlspecialchars($request_id) ?>">
+                                                 Delete
+                                            </a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                            <tr onclick="selectRow(this)">
-                                <td>
-                                    <div class="company-info">
-                                        <div class="company-logo" style="background: #e17055;">
-                                            <i class="fas fa-layer-group"></i>
-                                        </div>
-                                        <div class="company-details">
-                                            <h6>Brotha Platforms</h6>
-                                            <p>brotha.gg</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill pink" style="width: 12%;"></div>
-                                    </div>
-                                    <div class="progress-percentage">12%</div>
-                                </td>
-                                <td>
-                                    <div class="description">
-                                        <h6>AI Billing And Invoicing App</h6>
-                                        <p>Makes invoice and billing with AI/ML</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date">July 8, 2026</div>
-                                </td>
-                                <td>
-                                    <span class="status-badge failed">Failed</span>
-                                </td>
-                                <td>
-                                    <div class="row-menu">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr onclick="selectRow(this)">
-                                <td>
-                                    <div class="company-info">
-                                        <div class="company-logo" style="background: #6c5ce7;">
-                                            <i class="fas fa-code"></i>
-                                        </div>
-                                        <div class="company-details">
-                                            <h6>Layerz Softwares</h6>
-                                            <p>layerz.io</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill blue" style="width: 71%;"></div>
-                                    </div>
-                                    <div class="progress-percentage">71%</div>
-                                </td>
-                                <td>
-                                    <div class="description">
-                                        <h6>Data Aggregation App</h6>
-                                        <p>Compile and manage data seamlessly</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="date">July 1, 2026</div>
-                                </td>
-                                <td>
-                                    <span class="status-badge pending">Pending</span>
-                                </td>
-                                <td>
-                                    <div class="row-menu">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr onclick="selectRow(this)">
-                                <td>
-                                    <div class="company-info">
-                                        <div class="company-logo" style="background: #74b9ff;">
-                                            <i class="fas fa-share-alt"></i>
-                                        </div>
-                                        <div class="company-details">
-                                            <h6>Linez Technologies</h6>
-                                            <p>linez.tech</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill purple" style="width: 20%;"></div>
-                                    </div>
-                                    <div class="progress-percentage">20%</div>
-                                </td>
-                                <td>
-                                  
+                        <?php endwhile; endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+$(document).on("click", ".btn-accept", function () {
+    const id = $(this).attr("id");
+    if (id.length > 0 && confirm("Are you sure you want to accept this request ?")) {
+        $.ajax({
+            url: "../engine/accept-offer",
+            method: "POST",
+            data: { id: id },
+            dataType: "json",
+            success: function (response) {
+                swal({
+                    title: response.status === "success" ? "Success" : "Error",
+                    icon: response.status === "success" ? "success" : "error",
+                    text: response.message
+                });
+            }
+        });
+    }
+});
+
+$(document).on("click", ".btn-reject", function () {
+    const id = $(this).attr("id");
+    if (id.length > 0 && confirm("Are you sure you want to reject this request ?")) {
+        $.ajax({
+            url: "../engine/reject-offer",
+            method: "POST",
+            data: { id: id },
+            dataType: "json",
+            success: function (response) {
+                swal({
+                    title: response.status === "success" ? "Success" : "Error",
+                    icon: response.status === "success" ? "success" : "error",
+                    text: response.message
+                });
+            }
+        });
+    }
+});
+
+$(document).on("click", ".btn-delete", function () {
+    const id = $(this).attr("id");
+    if (id.length > 0 && confirm("Are you sure you want to delete this request ?")) {
+        $.ajax({
+            url: "../engine/delete-offer",
+            method: "POST",
+            data: { id: id },
+            dataType: "json",
+            success: function (response) {
+                swal({
+                    title: response.status === "success" ? "Success" : "Error",
+                    icon: response.status === "success" ? "success" : "error",
+                    text: response.message
+                });
+            }
+        });
+    }
+});
+</script>
+
+<script>
+$(document).on("click", ".options", function(e) {
+    e.preventDefault();
+    $(".delete-container").removeClass("d-none");
+    $(this).closest(".row-menu").find(".delete-container").toggleClass("d-none");
+});
+</script>
+
+</body>
+</html>
