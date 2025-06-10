@@ -20,6 +20,7 @@ if (!empty($user_dob)) {
     }
 }
 $user_address     = isset($user['user_address']) && !empty($user['user_address']) ? $user['user_address'] : "N/A";
+$user_full_address = $user_address.",".$user_location ?? "";
 $user_rating      = isset($user['user_rating']) && !empty($user['user_rating']) ? $user['user_rating'] : "N/A";
 $user_gender      = isset($user['user_gender']) && !empty($user['user_gender']) ? $user['user_gender'] : "N/A";
 $user_likes       = isset($user['user_likes']) && !empty($user['user_likes']) ? $user['user_likes'] : "N/A";

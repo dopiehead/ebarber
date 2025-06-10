@@ -12,10 +12,13 @@
                if($getstate->execute()):
                    $result = $getstate->get_result();
                   while($row = $result->fetch_assoc()): ?>
-                     <div id='<?= htmlspecialchars($row['state']) ?>' class="location-tag text-capitalize"><?= htmlspecialchars($row['state'])?></div>
+                     <a href='products?state=<?= htmlspecialchars($row['state']) ?>' class="location-tag text-capitalize text-decoration-none">
+                         
+                         <?= htmlspecialchars($row['state'])?>
+                         
+                     </a>
             <?php  endwhile;
                endif;
             ?>     
         </div>
     </div>
-    

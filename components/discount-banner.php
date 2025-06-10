@@ -3,7 +3,7 @@
         <div class="banner-content "  data-aos="fade-up">
             <div class="discount-text">25% Discount</div>
             <div class="discount-description">Get a discount of up to 25% if you pay for products via e-wallet</div>
-            <button href='products.php?filter=discount' class="book-now-btn book-now">Book Now</button>
+            <button href='products?filter=discount' class="book-now-btn book-now">Book Now</button>
         </div>
         <div class="banner-image">
             <!-- Background image is set in CSS -->
@@ -20,4 +20,3 @@
            }
         });
     </script>
-

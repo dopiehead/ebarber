@@ -20,6 +20,8 @@ $getUserdetails->bind_param("i", $user_id);
 if ($getUserdetails->execute()) {
     $userResult = $getUserdetails->get_result();
     $user = $userResult->fetch_assoc();
+     $extension = strtolower(pathinfo($user['user_image'],PATHINFO_EXTENSION));
+     $image_extension  = array('jpg','jpeg','png'); 
 }
 
 if (!$user) {
@@ -58,7 +60,11 @@ extract($user); // Now variables like $user_name, $user_email, etc., are availab
 
 <!-- Profile Image -->
 <div class="position-absolute profile-image" data-aos="fade-up">
-    <img src="<?= htmlspecialchars($user_image) ?>" alt="<?= htmlspecialchars($user_name) ?>">
+     <?php if (!in_array($extension , $image_extension)) {
+         echo"<div class='py-4 px-2 bg-warning text-center mt-5' style='box-shadow:0px 3px 12px rgba(255,255,255,0.6);' class='text-center'><span class='text-secondary text-uppercase text-dark' style='font-size:120px;'>".substr($user_name,0,2)."</span></div>";      
+             } else { ?> 
+         <img src="<?= htmlspecialchars($user_image) ?>" alt="<?= htmlspecialchars($user_name) ?>">
+    <?php } ?>
 </div>
 
 <main class="position-relative">
@@ -114,7 +120,18 @@ extract($user); // Now variables like $user_name, $user_email, etc., are availab
             <h1 class="fw-bold px-5 text-center"><?= htmlspecialchars($user_name) ?></h1>
             <div class="rating-text">
                 <?= (int)$user_likes ?> likes · <?= (int)$user_shares ?> shares · 0 comments 
-                ·  &nbsp;<a style="cursor:pointer;" onclick="toggleMessage()"><i class='bi bi-envelope'></i></a>
+                ·  &nbsp;
+                  <?php if($payment_status == 1 && $user_type='barber'): ?>
+                <a style="cursor:pointer;" onclick="toggleMessage()"><i class='bi bi-envelope'></i></a>
+                . &nbsp;
+                <a style="cursor:pointer;"
+                    href="https://wa.me/<?= "+234".htmlspecialchars($user_phone) ?>?text=Hello%2C%20I%20am%20interested%20in%20your%20service%20listed%20on%20ebarber%20website.%20Can%20you%20share%20more%20details%3F"
+                     target="_blank" class="text-success text-decoration-none"
+                 >
+                  <i class='bi bi-whatsapp'></i>
+                 </a>
+                   <?php endif; ?>
+
             </div>
             <div class="rating">
                 <span class="stars">★★★★★</span>

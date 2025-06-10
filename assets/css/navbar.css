@@ -262,27 +262,28 @@ nav ul li a:hover {
 
 /* Responsive styles */
 @media screen and (max-width: 768px) {
-    .nav-list{
-        display: none;
-        background-color: rgb(27, 27, 27);
-        width: 100%;
-        position:absolute;
-        top:10%;
-        margin-top:15px;
-        left:0;
-        padding:20px 0;
-        z-index: 111111;
-       /* margin-left:-10px; */
-    }
+  .nav-list {
+    display: none;
+    background-color: rgb(27, 27, 27);
+    width: 100%;
+    position: absolute;
+    top: 10%;
+    margin-top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px 0;
+    z-index: 111111;
+}
 
-    .nav-list ul{
-        display:flex;
-        justify-content: center;
-        align-items:center;
-        gap:15px;
-        color: white;
-        flex-direction: column;
-    }
+.nav-list ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    flex-direction: column;
+}
+
     
     
     .site-title {

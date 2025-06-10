@@ -12,14 +12,11 @@
                 <div class="food-categories">Food, Store, Salon, Cafe, Restaurant etc</div>
                 
                 <div class="food-buttons">
-                    <button class="food-button location-button">
-                        <span class="button-icon">📍</span>
-                        Select Location
-                    </button>
-                    <button class="food-button order-button">
+
+                    <a href='https://efood.efixit.ng' class="food-button order-button text-decoration-none ">
                         <span class="button-icon">🔍</span>
-                        Find location to order
-                    </button>
+                        Go to efood
+                    </a>
                 </div>
             </div>
             
@@ -40,5 +37,18 @@
         <div class="drink-text">
             <h2 class="drink-heading fs-2">Buy and Sell Your Favorite Drinks</h2>
             <p class="drink-description">Explore a wide variety of drinks from around the world, join our community of drink enthusiasts.</p>
+                 <button id='https://edrink.efixit.ng' class="food-button order-button">
+                        <span class="button-icon">🔍</span>
+                        Go to edrink
+                </button>
+            
         </div>
     </div>
+    <script>
+        $(document).on("click","food-button",function(){
+            const edrinks = $(this).attr("id");
+            if(edrinks.length > 0){
+            window.location.href= edrinks;
+            }
+        });
+    </script>

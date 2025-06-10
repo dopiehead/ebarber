@@ -10,8 +10,36 @@
 </head>
 <body>
 
-<?php include("components/nav.php"); ?>
+<?php include("components/nav.php"); 
+$search = isset($_GET['search']) && !empty($_GET['search']) ? $_GET['search'] : "";
+if ($search): ?>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function() {
+            const searchVal = <?= json_encode($search) ?>;
+            const $input = $("#q");
+            if ($input.length) {
+                $input.val(searchVal).trigger("keyup");
+            }
+        }, 300); // 500 milliseconds delay
+    });
+</script>
+<?php endif;
 
+$state = isset($_GET['state']) && !empty($_GET['state']) ? $_GET['state'] : "";
+if ($state): ?>
+<script>
+    $(document).ready(function() {
+        const stateVal = <?= json_encode($state) ?>;
+        const $stateInput = $("#locationFilter"); // change to your input/select ID
+        if ($stateInput.length) {
+            setTimeout(() => {
+                $stateInput.val(stateVal).trigger("change");
+            }, 300);  // 100 milliseconds delay
+        }
+    });
+</script>
+<?php endif; ?>
 <!-- Booking Form Container -->
 <div class="booking-form px-5 mt-4">
 
@@ -20,7 +48,7 @@
             <!-- Search Input -->
             <div class="form-field">
                 <label class="form-label">Search for barber</label>
-                <input type="search" name="q" id="q" class="w-100 border-secondary">
+                <input type="search" name="q" id="q" class="w-100 border-secondary" >
             </div>
 
             <!-- Style Dropdown -->
@@ -103,11 +131,11 @@
         <div class="price-filter">
     <div class="filter-row mb-2">
         <label for="price_from" class="form-label text-white">Price From</label>
-        <input type="number" name="price_from" id="price_from" class="form-control" placeholder="e.g. 1000" min="<?= htmlspecialchars($min_price)?>" style="background-color:inherit;color:white;">
+        <input type="number" name="price_from" id="price_from" class="form-control" placeholder="e.g. 1000" value="<?= htmlspecialchars($min_price)?>" min="<?= htmlspecialchars($min_price)?>" style="background-color:inherit;color:white;">
     </div>
     <div class="filter-row">
         <label for="price_to" class="form-label text-white">Price To</label>
-        <input type="number" name="price_to" id="price_to" class="form-control" placeholder="e.g. 10000" max="<?= htmlspecialchars($max_price)?>" style="background-color:inherit;color:white;">
+        <input type="number" name="price_to" id="price_to" class="form-control" placeholder="e.g. 10000" value="<?= htmlspecialchars($max_price)?>" max="<?= htmlspecialchars($max_price)?>" style="background-color:inherit;color:white;">
     </div>
 </div>
 
@@ -146,7 +174,6 @@ $getgender->close();
         <option value="user_fee_DESC">Highest Fee</option>
     </select>
 </div>
-
     <!-- Separator -->
     <div class="content-separator"></div>
 
@@ -171,17 +198,16 @@ $(document).ready(function() {
 
     // Search input
     $('#q').on('keyup', function(e) {
-        const x = $('#q').val();
         e.preventDefault();
+        const x = $('#q').val(); 
         fetchData(x);
     });
 
     // Filter: barber_style
     $('#barber_style').on('change', function(e) {
+        e.preventDefault();
         const x = $('#q').val();
         const barber_style = $('#barber_style').val();
-        alert(barber_style);
-        e.preventDefault();
         fetchData(x,barber_style);
     });
 
@@ -204,7 +230,6 @@ $(document).ready(function() {
         fetchData(x, barber_style, locationFilter, user_preference);
     });
 
-
     $('.gender').on('click', function(e) {
          $(".gender").removeClass("active");
          $(this).addClass("active");
@@ -216,8 +241,6 @@ $(document).ready(function() {
         const gender = $(this).attr("id");     
         fetchData(x, barber_style, locationFilter, user_preference, gender);
     });
-
-
 
     // Price range filters
     $('#price_from').on('keyup', function(e) {
@@ -273,22 +296,22 @@ $(document).ready(function() {
     });
 
     // Main AJAX function
-    function fetchData(x, barber_style, locationFilter, user_preference, gender, price_from, price_to, orderBy, page) {
+    function fetchData(x, barber_style, locationFilter, user_preference, gender='', price_from, price_to, orderBy, page) {
         $(".spinner-border").show();
 
         $.ajax({
             url: "engine/get-products",
             type: "POST",
             data: {
-                q: x,
-                barber_style: barber_style,
-                locationFilter: locationFilter,
-                user_preference: user_preference,
-                gender: gender,
+                q: x || "",
+                barber_style: barber_style || "",
+                locationFilter: locationFilter || "",
+                user_preference: user_preference || "",
+                gender: gender || "",
                 price_from: price_from,
                 price_to: price_to,
-                orderBy: orderBy,
-                page: page
+                orderBy: orderBy || "",
+                page: page || 1
             },
             success: function(data) {
                 $(".spinner-border").hide();

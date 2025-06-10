@@ -6,11 +6,25 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: poppins, sans-serif;
     line-height: 1.6;
     color: #333;
     overflow-x: hidden;
 }
+
+
+@media screen and (max-width: 748px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    position: relative;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
 
 /* ===== MAIN CONTAINER ===== */
 .container {

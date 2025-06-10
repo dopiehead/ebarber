@@ -8,5 +8,5 @@
         
         <p class="tagline text-white text-xl mb-8 text-center">Rocking your haircut brings pride</p>
         
-        <a href="#" class="barber-tag uppercase text-xs tracking-wider px-6 py-2 text-pink-500 rounded-sm hover:text-white">BARBER</a>
+        <a href="products.php" class="barber-tag uppercase text-xs tracking-wider px-6 py-2 text-pink-500 rounded-sm hover:text-white">BARBER</a>
     </div>

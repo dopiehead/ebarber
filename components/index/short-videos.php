@@ -5,7 +5,7 @@
         </div>
         
         <div class="short-video-grid">
-            <div class="video-item bg-light">
+            <div class="video-item bg-secondary">
                <!-- place video src here -->
                 <div class="play-button">
                     <div class="play-icon"></div>
@@ -23,7 +23,7 @@
                 <div class="video-duration">3:08 mins</div>
             </div>
             
-            <div class="video-item bg-light">
+            <div class="video-item bg-secondary">
               
                 <div class="play-button">
                     <div class="play-icon"></div>
@@ -41,7 +41,7 @@
                 <div class="video-duration">4:22 mins</div>
             </div>
             
-            <div class="video-item bg-light">
+            <div class="video-item bg-secondary">
               <!-- place video here -->
                 <div class="play-button">
                     <div class="play-icon"></div>
@@ -59,7 +59,7 @@
                 <div class="video-duration">2:46 mins</div>
             </div>
             
-            <div class="video-item bg-light">
+            <div class="video-item bg-secondary">
                <!-- place video here -->
                 <div class="play-button">
                     <div class="play-icon"></div>
@@ -76,5 +76,23 @@
                 </div>
                 <div class="video-duration">3:59 mins</div>
             </div>
+            
+                <div class="video-item bg-secondary">
+               <!-- place video here -->
+                <div class="play-button">
+                    <div class="play-icon"></div>
+                </div>
+                <div class="video-stats">
+                    <div class="video-views">
+                        <span class="view-icon"></span>
+                        3,801 views
+                    </div>
+                    <div class="likes-count">
+                        <span class="like-icon"></span>
+                        142
+                    </div>
+                </div>
+                <div class="video-duration">3:59 mins</div>
+            </div>        
         </div>
     </div>

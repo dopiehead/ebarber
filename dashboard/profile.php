@@ -20,7 +20,56 @@
 <?php include("components/sidebar.php"); ?>
 
 <div class="main-content">
-    <?php include("components/overview.php"); ?>
+    
+<?php include("components/overview.php"); ?>
+    
+<?php
+require("../engine/config.php");
+
+if (!$conn) {
+    die("Connection has not been established: " . mysqli_connect_error());
+}
+
+$getuser = $conn->prepare("SELECT * FROM user_information WHERE sid = ? ORDER BY id DESC LIMIT 1");
+if (!$getuser) {
+    die("Prepare failed: " . $conn->error);
+}
+
+$getuser->bind_param("i", $_SESSION['user_id']);
+if ($getuser->execute()) {
+    $userResult = $getuser->get_result();
+    if ($userResult->num_rows > 0) {
+        $user = $userResult->fetch_assoc();
+        
+        // Assign fields to variables with default values if not set
+        $about = isset($user['about']) ? $user['about'] : 'N/A';
+        $service = isset($user['service']) ? $user['service'] : 'N/A';
+        $user_phone = isset($user['user_phone']) ? $user['user_phone'] : 'N/A';
+        $user_address = isset($user['user_address']) ? $user['user_address'] : 'N/A';
+        $bank_name = isset($user['bank_name']) ? $user['bank_name'] : 'N/A';
+        $account_number = isset($user['account_number']) ? $user['account_number'] : 'N/A';
+        $whatsapp = isset($user['whatsapp']) ? $user['whatsapp'] : 'N/A';
+        $state = isset($user['state']) ? $user['state'] : 'N/A';
+        $lga = isset($user['lga']) ? $user['lga'] : 'N/A';
+        $facebook = isset($user['facebook']) ? $user['facebook'] : 'N/A';
+        $twitter = isset($user['twitter']) ? $user['twitter'] : 'N/A';
+        $linkedin = isset($user['linkedin']) ? $user['linkedin'] : 'N/A';
+        $instagram = isset($user['instagram']) ? $user['instagram'] : 'N/A';
+        $day = isset($user['day']) ? $user['day'] : 'N/A';
+        $opening_time = isset($user['opening_time']) ? $user['opening_time'] : 'N/A';
+        $closing_time = isset($user['closing_time']) ? $user['closing_time'] : 'N/A';
+
+    }
+    
+} else {
+    echo "Query execution failed: " . $getuser->error;
+}
+
+$getuser->close();
+$conn->close();
+?>
+    
+    
 
     <div class="container-fluid py-4">
         <!-- Tabs -->
@@ -36,7 +85,10 @@
             <div class="card p-4 mb-4">
                 <h5 class="card-title border-bottom pb-2">Personal Details</h5>
                 <div class="card-body">
+                    <p><small>Name: <?= htmlspecialchars($_SESSION['user_name']) ?></small></p>
+                    <p><small>Email: <?= htmlspecialchars($_SESSION['user_email']) ?></small></p>
                     <p><small>Phone: <?= htmlspecialchars($_SESSION['user_phone']) ?></small></p>
+              
                     <p><small>Dial code: +234</small></p>
 
                     <form id="editpage-form" method="post" enctype="multipart/form-data">
@@ -58,7 +110,7 @@
     <input type="hidden" name="user_type" value="<?= htmlspecialchars($user['user_type'] ?? $_SESSION['user_type']) ?>">
 
     <div class="mb-3">
-        <input type="text" name="user_name" class="form-control" placeholder="<?php if($_SESSION['user_role']==="barber")echo"Business ";?> Name" value="<?= htmlspecialchars($user['user_name'] ?? '') ?>">
+        <input type="text" name="user_name" class="form-control" placeholder="<?php if($_SESSION['user_role']==="barber")echo"Business ";?> Name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
     </div>
 
     <div class="row g-3 mb-3">
@@ -67,21 +119,22 @@
     </div>
 
     <?php if ($_SESSION['user_role'] == 'barber'): ?>
-        <div class="mb-3"><input type="text" name="bank_name" class="form-control" placeholder="Bank Name" value="<?= htmlspecialchars($user['bank_name'] ?? '') ?>"></div>
-        <div class="mb-3"><input type="number" name="account_number" class="form-control" placeholder="Account Number" value="<?= htmlspecialchars($user['account_number'] ?? '') ?>"></div>
+        <div class="mb-3"><input type="text" name="bank_name" class="form-control" placeholder="Bank Name" value="<?= htmlspecialchars($bank_name) ?>"></div>
+        <div class="mb-3"><input type="number" name="account_number" class="form-control" placeholder="Account Number" value="<?= htmlspecialchars($account_number) ?>"></div>
     <?php endif ?>
 
     <h6>Contact Information</h6>
     <div class="row g-3 mb-3">
-        <div class="col-md"><input type="text" name="country" class="form-control" placeholder="Country" value="<?= htmlspecialchars($user['country'] ?? '') ?>"></div>
-        <div class="col-md"><input type="text" name="user_phone" class="form-control" placeholder="Phone number" value="<?= htmlspecialchars($user['user_phone'] ?? '') ?>"></div>
-        <div class="col-md"><input type="text" name="whatsapp" class="form-control" placeholder="WhatsApp" value="<?= htmlspecialchars($user['whatsapp'] ?? '') ?>"></div>
+        <div class="col-md"><input type="text" name="country" class="form-control" placeholder="Country" value="<?= htmlspecialchars($state) ?>"></div>
+        
+        <div class="col-md"><input type="text" name="user_phone" class="form-control" placeholder="Phone number" value="<?= htmlspecialchars($_SESSION['user_phone']) ?>"></div>
+        <div class="col-md"><input type="text" name="whatsapp" class="form-control" placeholder="WhatsApp" value="<?= htmlspecialchars($whatsapp) ?>"></div>
     </div>
 
     <h6>Address Details</h6>
     <?php require '../engine/connection.php'; ?>
     <div class="mb-3">
-        <select name="user_location" class="form-select location">
+        <select name="user_location" class="form-select location text-capitalize">
             <option value="">Entire Nigeria</option>
             <?php
             $getStates = mysqli_query($con, "SELECT * FROM states_in_nigeria GROUP BY state");
@@ -94,15 +147,15 @@
     </div>
 
     <span id="lg" class="d-block mb-3"></span>
-    <input type="text" name="user_address" class="form-control mb-3" placeholder="Enter full address" value="<?= htmlspecialchars($user['user_address'] ?? '') ?>">
+    <input type="text" name="user_address" class="form-control mb-3" placeholder="Enter full address" value="<?= htmlspecialchars($user_address) ?>">
 
     <?php if ($_SESSION['user_role'] == 'barber'): ?>
         <h6>About Your Organisation</h6>
         <div class="mb-3">
-            <textarea class="form-control" name="user_bio" rows="3" placeholder="About Your Organization"><?= htmlspecialchars($user['user_bio'] ?? '') ?></textarea>
+            <textarea class="form-control" name="user_bio" rows="3" placeholder="About Your Organization"><?= htmlspecialchars($about) ?></textarea>
         </div>
         <div class="mb-3">
-            <textarea class="form-control" name="user_services" rows="3" placeholder="Services Your Organization Provides"><?= htmlspecialchars($user['user_services'] ?? '') ?></textarea>
+            <textarea class="form-control" name="user_services" rows="3" placeholder="Services Your Organization Provides"><?= htmlspecialchars($services) ?></textarea>
         </div>
 
         <h6>Availability</h6>
@@ -120,20 +173,20 @@
                 </select>
             </div>
             <div class="col-md">
-                <input type="text" name="opening_time" class="form-control" placeholder="Opening Time (am/pm)" value="<?= htmlspecialchars($user['opening_time'] ?? '') ?>">
+                <input type="text" name="opening_time" class="form-control" placeholder="Opening Time (am/pm)" value="<?= htmlspecialchars($opening_time) ?>">
             </div>
             <div class="col-md">
-                <input type="text" name="closing_time" class="form-control" placeholder="Closing Time (am/pm)" value="<?= htmlspecialchars($user['closing_time'] ?? '') ?>">
+                <input type="text" name="closing_time" class="form-control" placeholder="Closing Time (am/pm)" value="<?= htmlspecialchars($closing_time) ?>">
             </div>
         </div>
     <?php endif ?>
 
     <h6>Social Media</h6>
     <div class="row g-3 mb-3">
-        <div class="col-md"><input type="text" name="facebook" class="form-control" placeholder="Facebook" value="<?= htmlspecialchars($user['facebook'] ?? '') ?>"></div>
-        <div class="col-md"><input type="text" name="twitter" class="form-control" placeholder="Twitter" value="<?= htmlspecialchars($user['twitter'] ?? '') ?>"></div>
-        <div class="col-md"><input type="text" name="linkedin" class="form-control" placeholder="LinkedIn" value="<?= htmlspecialchars($user['linkedin'] ?? '') ?>"></div>
-        <div class="col-md"><input type="text" name="instagram" class="form-control" placeholder="Instagram" value="<?= htmlspecialchars($user['instagram'] ?? '') ?>"></div>
+        <div class="col-md"><input type="text" name="facebook" class="form-control" placeholder="Facebook" value="<?= htmlspecialchars($facebook) ?>"></div>
+        <div class="col-md"><input type="text" name="twitter" class="form-control" placeholder="Twitter" value="<?= htmlspecialchars($twitter) ?>"></div>
+        <div class="col-md"><input type="text" name="linkedin" class="form-control" placeholder="LinkedIn" value="<?= htmlspecialchars($linkedin) ?>"></div>
+        <div class="col-md"><input type="text" name="instagram" class="form-control" placeholder="Instagram" value="<?= htmlspecialchars($instagram) ?>"></div>
     </div>
 
     <div class="text-center mb-3" id="loading-image" style="display: none;">

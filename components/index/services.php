@@ -38,8 +38,18 @@
                 <button class="style-button">STYLE</button>
             </div>
             
-            <button class="explore-button">EXPLORE NOW</button>
+            <button id='products.php' class="text-decoration-none text-warning explore-button">EXPLORE NOW</button>
         </div>
+        
+        <script>
+             $(document).on("click",".explore-button",function(){
+                 const barbers = $(this).attr("id");
+                 if(barbers.length > 0){
+                     window.location.href = barbers;
+                 }
+             });
+            
+        </script>
              
   <div class="stats-section">
     <div class="stat-item">

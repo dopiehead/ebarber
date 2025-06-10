@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['location'])) {
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
-                echo "<select name='lga' id='lga' class='lga address_details'>";
+                echo "<select name='lga' id='lga' class='lga address_details form-control mt-1'>";
                 while ($row = $result->fetch_assoc()) {
                     $lga = htmlspecialchars($row['lga']);
                     echo "<option value='{$lga}'>{$lga}</option>";

@@ -2,7 +2,7 @@
     <div class="groups-section pt-3 pt-5">
         <div class="groups-header">
             <h2 style="font-family:poppins;" class="section-title fs-3">Groups you may like</h2>
-            <a href="#" class="view-all">View All</a>
+            <a href="#" class="view-all d-none">View All</a>
         </div>
         
         <div class="groups-container px-3" >
